@@ -24,8 +24,8 @@
 <body>
     <h1>Registration Form</h1>
     <form id="registration-form">
-        <label for="name">Name:</label>
-        <input type="text" id="name" name="name" required><br>
+        <label for="full-name">Full Name:</label>
+        <textarea id="full-name" name="full-name" rows="4" cols="50" required></textarea><br>
 
         <label for="email">Email:</label>
         <input type="email" id="email" name="email" required><br>
@@ -33,8 +33,8 @@
         <label for="password">Password:</label>
         <input type="password" id="password" name="password" required><br>
 
-        <label for="dob">Dob:</label>
-        <input type="date" id="dob" name="dob" required><br>
+        <label for="dob">Date of Birth:</label>
+        <input type="date" id="dob" name="dob" required min="1900-01-01" max="2005-12-31"><br>
 
         <label for="accepted-terms">Accepted terms?</label>
         <input type="checkbox" id="accepted-terms" name="accepted-terms"><br>
@@ -59,21 +59,63 @@
     </table>
 
     <script>
+        // Load entries from web storage
+        function loadEntriesFromStorage() {
+            const entriesJSON = localStorage.getItem("entries");
+            return entriesJSON ? JSON.parse(entriesJSON) : [];
+        }
+
+        // Save entries to web storage
+        function saveEntriesToStorage(entries) {
+            localStorage.setItem("entries", JSON.stringify(entries));
+        }
+
         const registrationForm = document.getElementById("registration-form");
         const userTable = document.getElementById("user-table");
+
+        // Load entries from web storage
+        const entries = loadEntriesFromStorage();
+
+        // Populate the table with existing entries
+        function populateTable() {
+            for (const entry of entries) {
+                const newRow = userTable.insertRow();
+                newRow.innerHTML = `
+                    <td>${entry.name}</td>
+                    <td>${entry.email}</td>
+                    <td>${entry.password}</td>
+                    <td>${entry.dob}</td>
+                    <td>${entry.acceptedTerms ? "Yes" : "No"}</td>
+                `;
+            }
+        }
+
+        // Display entries on page load
+        populateTable();
 
         registrationForm.addEventListener("submit", function(event) {
             event.preventDefault();
 
-            const name = document.getElementById("name").value;
+            const fullName = document.getElementById("full-name").value;
             const email = document.getElementById("email").value;
             const password = document.getElementById("password").value;
             const dob = document.getElementById("dob").value;
             const acceptedTerms = document.getElementById("accepted-terms").checked;
 
+            // Validate age
+            const birthYear = new Date(dob).getFullYear();
+            const currentYear = new Date().getFullYear();
+            const age = currentYear - birthYear;
+
+            if (age < 18 || age > 55) {
+                alert("Age must be between 18 and 55 years.");
+                return;
+            }
+
+            // Create a new table row and add data
             const newRow = userTable.insertRow();
             newRow.innerHTML = `
-                <td>${name}</td>
+                <td>${fullName}</td>
                 <td>${email}</td>
                 <td>${password}</td>
                 <td>${dob}</td>
@@ -82,6 +124,11 @@
 
             // Clear form fields
             registrationForm.reset();
+
+            // Save the new entry to web storage
+            const newEntry = { name: fullName, email, password, dob, acceptedTerms };
+            entries.push(newEntry);
+            saveEntriesToStorage(entries);
         });
     </script>
 </body>
