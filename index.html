@@ -1,135 +1,89 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registration Form</title>
-    <style>
-        table {
-            border-collapse: collapse;
-            width: 100%;
-        }
+<style>
+.container {
+  height:50%;
+  width:35%;
+  margin: 0 auto;
+  padding: 25px;
+  border: 1px solid #ccc;
+  background-color: #f9f9f9;
+  line-height: 1.0;
+}
+.container1{
+  height:58%;
+  width:52%;
+  margin: 0 auto;
+  padding: 15px;
+  border: 1px solid #ccc;
+  background-color: #f9f9f9;
+  line-height: 1.5;
+}
+label {
+      display: inline-block;
+      width: 100px; 
+      margin-right: 10px; 
+      font-weight: bold;
+    }
+    input {
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+   .move-left
+   {
+      float:left;
+   }
+   button{
+      padding-top:6px;
+   }
+   table {
+      width: 100%;
+      border-collapse: 1px;
+    }
 
-        th, td {
-            border: 1px solid black;
-            padding: 8px;
-            text-align: left;
-        }
+    th, td {
+      padding: 8px;
+      border-bottom: 1px solid #ccc;
+      text-align: center;
+    }
 
-        th {
-            background-color: #f2f2f2;
-        }
-    </style>
-</head>
+    th {
+      background-color: #007bff;
+      color: #fff;
+    }
+</style>
 <body>
-    <h1>Registration Form</h1>
-    <form id="registration-form">
-        <label for="full-name">Full Name:</label>
-        <textarea id="full-name" name="full-name" rows="4" cols="50" required></textarea><br>
+   <center> 
+      <form id="UserDetails">
+         <div class="container">
+       <center> <h1> Registration form </h1></center>  
+        <label for="name">Name</label>
+        <input required type="text" id="name" name="name" placeholder="Enter full name">
+      <br>
+      <br>
+        <label for="email">Email</label>
+        <input required type="email" id="email" name="email" placeholder="Enter email">
+     <br>
+     <br>
+        <label for="password">Password</label>
+        <input required type="password" id="password" name="password" placeholder="Enter password">
+     <br>
+     <br>
+        <label for="dob">Date of Birth</label>
+        <input required type="date" id="dob" name="dob" min="1968-08-08" max="2005-08-08"/>
+     <br>
+     <br>
+        <input required type="checkbox" id="acceptTerms" name="acceptTerms" class="move-left">
+        <label for="acceptTerms" class="move-left">Accept Terms & Conditions</label>
+     <br>
+     <br>
+        <button type="submit" style="background-color:green;" class="move-left">Submit</button>
+      </form>      
+      </div>
+      <div class="container1">
+         <center><h2>Entries</h2></center>
+         <div id="User-details"></div>
+      </div>
+   </center>
+     <script src="./index.js"></script>
 
-        <label for="email">Email:</label>
-        <input type="email" id="email" name="email" required><br>
-
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required><br>
-
-        <label for="dob">Date of Birth:</label>
-        <input type="date" id="dob" name="dob" required min="1900-01-01" max="2005-12-31"><br>
-
-        <label for="accepted-terms">Accepted terms?</label>
-        <input type="checkbox" id="accepted-terms" name="accepted-terms"><br>
-
-        <button type="submit">Submit</button>
-    </form>
-    
-    <h2>Registered Users</h2>
-    <table id="user-table">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Password</th>
-                <th>Dob</th>
-                <th>Accepted terms?</th>
-            </tr>
-        </thead>
-        <tbody>
-            <!-- Table rows will be dynamically added here -->
-        </tbody>
-    </table>
-
-    <script>
-        // Load entries from web storage
-        function loadEntriesFromStorage() {
-            const entriesJSON = localStorage.getItem("entries");
-            return entriesJSON ? JSON.parse(entriesJSON) : [];
-        }
-
-        // Save entries to web storage
-        function saveEntriesToStorage(entries) {
-            localStorage.setItem("entries", JSON.stringify(entries));
-        }
-
-        const registrationForm = document.getElementById("registration-form");
-        const userTable = document.getElementById("user-table");
-
-        // Load entries from web storage
-        const entries = loadEntriesFromStorage();
-
-        // Populate the table with existing entries
-        function populateTable() {
-            for (const entry of entries) {
-                const newRow = userTable.insertRow();
-                newRow.innerHTML = `
-                    <td>${entry.name}</td>
-                    <td>${entry.email}</td>
-                    <td>${entry.password}</td>
-                    <td>${entry.dob}</td>
-                    <td>${entry.acceptedTerms ? "Yes" : "No"}</td>
-                `;
-            }
-        }
-
-        // Display entries on page load
-        populateTable();
-
-        registrationForm.addEventListener("submit", function(event) {
-            event.preventDefault();
-
-            const fullName = document.getElementById("full-name").value;
-            const email = document.getElementById("email").value;
-            const password = document.getElementById("password").value;
-            const dob = document.getElementById("dob").value;
-            const acceptedTerms = document.getElementById("accepted-terms").checked;
-
-            // Validate age
-            const birthYear = new Date(dob).getFullYear();
-            const currentYear = new Date().getFullYear();
-            const age = currentYear - birthYear;
-
-            if (age < 18 || age > 55) {
-                alert("Age must be between 18 and 55 years.");
-                return;
-            }
-
-            // Create a new table row and add data
-            const newRow = userTable.insertRow();
-            newRow.innerHTML = `
-                <td>${fullName}</td>
-                <td>${email}</td>
-                <td>${password}</td>
-                <td>${dob}</td>
-                <td>${acceptedTerms ? "Yes" : "No"}</td>
-            `;
-
-            // Clear form fields
-            registrationForm.reset();
-
-            // Save the new entry to web storage
-            const newEntry = { name: fullName, email, password, dob, acceptedTerms };
-            entries.push(newEntry);
-            saveEntriesToStorage(entries);
-        });
-    </script>
 </body>
-</html>
